@@ -35,12 +35,28 @@ export const GreatDalmuti = {
         return G;
     },
 
+    turn: {
+        moveLimit: 1,
+    },
+
     moves: {
         playCards: (G, ctx, cards) => {
-            if(cards.length === 0) return INVALID_MOVE;
+            if(cards === undefined || cards.length === 0) {
+                console.log("Attempt to play an undefined or illegal number of cards");
+                return INVALID_MOVE;
+            }
 
             let rank = SortCards(cards)[0];
-            if (G.mostRecentPlay !== undefined && (G.mostRecentPlay.length !== cards.length || SortCards(G.mostRecentPlay)[0] >= rank)) return INVALID_MOVE;
+            if (G.mostRecentPlay !== undefined) {
+                if (G.mostRecentPlay.length !== cards.length) {
+                    console.log("Attempt to play the wrong number of cards");
+                    return INVALID_MOVE;
+                }
+                if (SortCards(G.mostRecentPlay)[0] <= rank) {
+                    console.log("Attempt to play unacceptable rank of cards");
+                    return INVALID_MOVE;
+                }
+            }
 
             let match = true;
             cards.forEach((card) => match = match && (card === rank || card === 13));
@@ -51,8 +67,11 @@ export const GreatDalmuti = {
                 G.mostRecentPlayerIndex = ctx.playOrderPos;
                 G.mostRecentPlay = cards;
             } catch(e) {
+                console.log("Attempt to play cards not held by player");
                 return INVALID_MOVE;
             }
         },
+
+        pass: (G, ctx) => {},
     },
 }

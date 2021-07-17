@@ -26,6 +26,11 @@ it('playCards should not accept plays of no cards', () => {
     assert.equal(GreatDalmuti.moves.playCards(G, {playOrderPos:0}, []), INVALID_MOVE);
 });
 
+it('playCards should not accept plays of undefined cards', () => {
+    const G = GreatDalmuti.setup({numPlayers:6, random: {Shuffle: (deck) => deck}});
+    assert.equal(GreatDalmuti.moves.playCards(G, {playOrderPos:0}, undefined), INVALID_MOVE);
+});
+
 it('playCards should not accept plays of different ranked cards', () => {
     const G = GreatDalmuti.setup({numPlayers:6, random: {Shuffle: (deck) => deck}});
     assert.equal(GreatDalmuti.moves.playCards(G, {playOrderPos:0}, [11, 12]), INVALID_MOVE);
@@ -51,4 +56,10 @@ it('playCards should not accept subsequent plays that does not involve a better 
     const G = GreatDalmuti.setup({numPlayers:6, random: {Shuffle: (deck) => deck}});
     GreatDalmuti.moves.playCards(G, {playOrderPos:0}, [12, 12]);
     assert.equal(GreatDalmuti.moves.playCards(G, {playOrderPos:1}, [12, 12]), INVALID_MOVE);
+});
+
+it('playCards should accept valid subsequent plays', () => {
+    const G = GreatDalmuti.setup({numPlayers:6, random: {Shuffle: (deck) => deck}});
+    GreatDalmuti.moves.playCards(G, {playOrderPos:0}, [12, 12]);
+    assert.notEqual(GreatDalmuti.moves.playCards(G, {playOrderPos:1}, [11, 11]), INVALID_MOVE);
 });

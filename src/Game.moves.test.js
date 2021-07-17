@@ -63,3 +63,9 @@ it('playCards should accept valid subsequent plays', () => {
     GreatDalmuti.moves.playCards(G, {playOrderPos:0}, [12, 12]);
     assert.notEqual(GreatDalmuti.moves.playCards(G, {playOrderPos:1}, [11, 11]), INVALID_MOVE);
 });
+
+it('playCards should add player to finalRank when they play their last cards', () => {
+    const G = {hand:[[12]], finalRank:[]};
+    GreatDalmuti.moves.playCards(G, {playOrderPos:0, currentPlayer:'0'}, [12]);
+    assert.deepEqual(G.finalRank, ['0']);
+});

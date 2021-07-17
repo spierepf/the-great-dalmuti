@@ -17,6 +17,7 @@ export const GreatDalmuti = {
     setup: (ctx) => {
         let G = ({
             hand:[],
+            finalRank:[],
         });
 
         for (let i = 0; i < ctx.numPlayers; ++i) {
@@ -66,6 +67,9 @@ export const GreatDalmuti = {
                 G.hand[ctx.playOrderPos] = RemoveCards(G.hand[ctx.playOrderPos], cards);
                 G.mostRecentPlayerIndex = ctx.playOrderPos;
                 G.mostRecentPlay = cards;
+                if (G.hand[ctx.playOrderPos].length === 0) {
+                    G.finalRank.push(ctx.currentPlayer);
+                }
             } catch(e) {
                 console.log("Attempt to play cards not held by player");
                 return INVALID_MOVE;

@@ -1,5 +1,16 @@
+import { INVALID_MOVE } from 'boardgame.io/core';
+
 function SortCards(cards) {
     return [...cards].sort(function(a, b){return a - b})
+}
+
+function RemoveCards(hand, cards) {
+    cards.forEach(card => {
+        let index = hand.indexOf(card);
+        if (index === -1) throw new Error();
+        hand = hand.slice(0, index).concat(hand.slice(index+1, hand.length))
+    });
+    return hand;
 }
 
 export const GreatDalmuti = {
@@ -22,5 +33,24 @@ export const GreatDalmuti = {
         }
 
         return G;
+    },
+
+    moves: {
+        playCards: (G, ctx, cards) => {
+            let rank = SortCards(cards)[0];
+            if (G.mostRecentPlay !== undefined && (G.mostRecentPlay.length !== cards.length || SortCards(G.mostRecentPlay)[0] >= rank)) return INVALID_MOVE;
+
+            let match = true;
+            cards.forEach((card) => match = match && (card === rank || card === 13));
+            if(!match) return INVALID_MOVE;
+
+            try {
+                G.hand[ctx.playOrderPos] = RemoveCards(G.hand[ctx.playOrderPos], cards);
+                G.mostRecentPlayerIndex = ctx.playOrderPos;
+                G.mostRecentPlay = cards;
+            } catch(e) {
+                return INVALID_MOVE;
+            }
+        },
     },
 }

@@ -21,6 +21,11 @@ it('playCards should update mostRecentPlay', () => {
     assert.deepEqual(G.mostRecentPlay, [12, 12]);
 });
 
+it('playCards should not accept plays of no cards', () => {
+    const G = GreatDalmuti.setup({numPlayers:6, random: {Shuffle: (deck) => deck}});
+    assert.equal(GreatDalmuti.moves.playCards(G, {playOrderPos:0}, []), INVALID_MOVE);
+});
+
 it('playCards should not accept plays of different ranked cards', () => {
     const G = GreatDalmuti.setup({numPlayers:6, random: {Shuffle: (deck) => deck}});
     assert.equal(GreatDalmuti.moves.playCards(G, {playOrderPos:0}, [11, 12]), INVALID_MOVE);

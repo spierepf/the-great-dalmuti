@@ -37,6 +37,8 @@ export const GreatDalmuti = {
 
     moves: {
         playCards: (G, ctx, cards) => {
+            if(cards.length === 0) return INVALID_MOVE;
+
             let rank = SortCards(cards)[0];
             if (G.mostRecentPlay !== undefined && (G.mostRecentPlay.length !== cards.length || SortCards(G.mostRecentPlay)[0] >= rank)) return INVALID_MOVE;
 

@@ -2,6 +2,14 @@ function SortCards(cards) {
     return [...cards].sort(function(a, b){return a - b})
 }
 
+function RemoveCards(hand, cards) {
+    cards.forEach(card => {
+        let index = hand.indexOf(card);
+        hand = hand.slice(0, index).concat(hand.slice(index+1, hand.length))
+    });
+    return hand;
+}
+
 export const GreatDalmuti = {
     setup: (ctx) => {
         let G = ({
@@ -22,5 +30,11 @@ export const GreatDalmuti = {
         }
 
         return G;
+    },
+
+    moves: {
+        playCards: (G, ctx, cards) => {
+            G.hand[ctx.playOrderPosition] = RemoveCards(G.hand[ctx.playOrderPosition], cards);
+        },
     },
 }

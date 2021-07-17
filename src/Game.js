@@ -34,7 +34,7 @@ export const GreatDalmuti = {
 
     moves: {
         playCards: (G, ctx, cards) => {
-            G.hand[ctx.playOrderPosition] = RemoveCards(G.hand[ctx.playOrderPosition], cards);
+            G.hand[ctx.playOrderPos] = RemoveCards(G.hand[ctx.playOrderPos], cards);
         },
     },
 }

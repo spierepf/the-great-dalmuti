@@ -9,12 +9,6 @@ it('playCards should remove cards from players hand', () => {
     assert.deepEqual(G.hand[0], [1, 4, 5, 6, 7, 8, 9, 9, 10, 10, 11, 13]);
 });
 
-it('playCards should update mostRecentPlayerIndex', () => {
-    const G = GreatDalmuti.setup({numPlayers:6, random: {Shuffle: (deck) => deck}});
-    GreatDalmuti.moves.playCards(G, {playOrderPos:0}, [12, 12]);
-    assert.equal(G.mostRecentPlayerIndex, 0);
-});
-
 it('playCards should update mostRecentPlay', () => {
     const G = GreatDalmuti.setup({numPlayers:6, random: {Shuffle: (deck) => deck}});
     GreatDalmuti.moves.playCards(G, {playOrderPos:0}, [12, 12]);

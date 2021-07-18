@@ -65,7 +65,6 @@ export const GreatDalmuti = {
 
             try {
                 G.hand[ctx.playOrderPos] = RemoveCards(G.hand[ctx.playOrderPos], cards);
-                G.mostRecentPlayerIndex = ctx.playOrderPos;
                 G.mostRecentPlay = cards;
                 if (G.hand[ctx.playOrderPos].length === 0) {
                     G.finalRank.push(ctx.currentPlayer);

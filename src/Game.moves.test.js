@@ -69,3 +69,8 @@ it('playCards should add player to finalRank when they play their last cards', (
     GreatDalmuti.moves.playCards(G, {playOrderPos:0, currentPlayer:'0'}, [12]);
     assert.deepEqual(G.finalRank, ['0']);
 });
+
+it('pass is not valid for the player leading the trick', () => {
+    const G = GreatDalmuti.setup({numPlayers:6, random: {Shuffle: (deck) => deck}});
+    assert.equal(GreatDalmuti.moves.pass(G, {}), INVALID_MOVE);
+});

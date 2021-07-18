@@ -76,6 +76,11 @@ export const GreatDalmuti = {
             }
         },
 
-        pass: (G, ctx) => {},
+        pass: (G, ctx) => {
+            if (G.mostRecentPlay === undefined) {
+                console.log("Attempt by the lead player to pass");
+                return INVALID_MOVE;
+            }
+        },
     },
 }

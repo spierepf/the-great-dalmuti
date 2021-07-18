@@ -38,6 +38,16 @@ export const GreatDalmuti = {
 
     turn: {
         moveLimit: 1,
+        order: {
+            first: (G, ctx) => 0,
+            next: (G, ctx) => {
+                let nextPlayer = (ctx.playOrderPos + 1) % ctx.numPlayers;
+                while(G.hand[nextPlayer].length === 0) {
+                    nextPlayer = (nextPlayer + 1) % ctx.numPlayers;
+                }
+                return nextPlayer;
+            },
+        }
     },
 
     moves: {

@@ -13,6 +13,10 @@ function RemoveCards(hand, cards) {
     return hand;
 }
 
+function CurrentPlayerHasLead(G, ctx) {
+    return G.mostRecentPlay === undefined;
+}
+
 export const GreatDalmuti = {
     setup: (ctx) => {
         let G = ({
@@ -58,7 +62,7 @@ export const GreatDalmuti = {
             }
 
             let rank = SortCards(cards)[0];
-            if (G.mostRecentPlay !== undefined) {
+            if (!CurrentPlayerHasLead(G, ctx)) {
                 if (G.mostRecentPlay.length !== cards.length) {
                     console.log("Attempt to play the wrong number of cards");
                     return INVALID_MOVE;
@@ -86,7 +90,7 @@ export const GreatDalmuti = {
         },
 
         pass: (G, ctx) => {
-            if (G.mostRecentPlay === undefined) {
+            if (CurrentPlayerHasLead(G, ctx)) {
                 console.log("Attempt by the lead player to pass");
                 return INVALID_MOVE;
             }

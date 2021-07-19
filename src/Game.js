@@ -13,8 +13,15 @@ function RemoveCards(hand, cards) {
     return hand;
 }
 
+function NextPlayerWithCards(G, ctx, playerIndex) {
+    while(G.hand[playerIndex].length === 0) {
+        playerIndex = (playerIndex + 1) % ctx.numPlayers;
+    }
+    return playerIndex;
+}
+
 function CurrentPlayerHasLead(G, ctx) {
-    return G.mostRecentPlay === undefined;
+    return G.mostRecentPlay === undefined || (ctx.playOrderPos === NextPlayerWithCards(G, ctx, G.mostRecentPlayerIndex) && G.passSinceLastPlay);
 }
 
 export const GreatDalmuti = {
@@ -44,13 +51,7 @@ export const GreatDalmuti = {
         moveLimit: 1,
         order: {
             first: (G, ctx) => 0,
-            next: (G, ctx) => {
-                let nextPlayer = (ctx.playOrderPos + 1) % ctx.numPlayers;
-                while(G.hand[nextPlayer].length === 0) {
-                    nextPlayer = (nextPlayer + 1) % ctx.numPlayers;
-                }
-                return nextPlayer;
-            },
+            next: (G, ctx) => NextPlayerWithCards(G, ctx, (ctx.playOrderPos + 1) % ctx.numPlayers),
         }
     },
 
@@ -80,6 +81,8 @@ export const GreatDalmuti = {
             try {
                 G.hand[ctx.playOrderPos] = RemoveCards(G.hand[ctx.playOrderPos], cards);
                 G.mostRecentPlay = cards;
+                G.mostRecentPlayerIndex = ctx.playOrderPos;
+                G.passSinceLastPlay = false;
                 if (G.hand[ctx.playOrderPos].length === 0) {
                     G.finalRank.push(ctx.currentPlayer);
                 }
@@ -94,6 +97,7 @@ export const GreatDalmuti = {
                 console.log("Attempt by the lead player to pass");
                 return INVALID_MOVE;
             }
+            G.passSinceLastPlay = true;
         },
     },
 }

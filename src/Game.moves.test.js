@@ -15,6 +15,18 @@ it('playCards should update mostRecentPlay', () => {
     assert.deepEqual(G.mostRecentPlay, [12, 12]);
 });
 
+it('playCards should update mostRecentPlayerIndex', () => {
+    const G = GreatDalmuti.setup({numPlayers:6, random: {Shuffle: (deck) => deck}});
+    GreatDalmuti.moves.playCards(G, {playOrderPos:0}, [12, 12]);
+    assert.equal(G.mostRecentPlayerIndex, 0);
+});
+
+it('playCards should update passSinceTheLastPlay', () => {
+    const G = GreatDalmuti.setup({numPlayers:6, random: {Shuffle: (deck) => deck}});
+    GreatDalmuti.moves.playCards(G, {playOrderPos:0}, [12, 12]);
+    assert.equal(G.passSinceLastPlay, false);
+});
+
 it('playCards should not accept plays of no cards', () => {
     const G = GreatDalmuti.setup({numPlayers:6, random: {Shuffle: (deck) => deck}});
     assert.equal(GreatDalmuti.moves.playCards(G, {playOrderPos:0}, []), INVALID_MOVE);
@@ -64,7 +76,31 @@ it('playCards should add player to finalRank when they play their last cards', (
     assert.deepEqual(G.finalRank, ['0']);
 });
 
-it('pass is not valid for the player leading the trick', () => {
+it('pass should update passSinceLastPlay', () => {
     const G = GreatDalmuti.setup({numPlayers:6, random: {Shuffle: (deck) => deck}});
-    assert.equal(GreatDalmuti.moves.pass(G, {}), INVALID_MOVE);
+    GreatDalmuti.moves.playCards(G, {playOrderPos:0}, [12, 12]);
+    GreatDalmuti.moves.pass(G, {});
+    assert.equal(G.passSinceLastPlay, true);
+});
+
+it('pass is not valid for the player leading the trick', () => {
+    // player leading the opening trick
+    assert.equal(GreatDalmuti.moves.pass({mostRecentPlay:undefined, mostRecentPlayerIndex:undefined}, {}), INVALID_MOVE);
+
+    // player who won the current trick
+    assert.equal(GreatDalmuti.moves.pass({mostRecentPlay:[12], mostRecentPlayerIndex:0, passSinceLastPlay:true, hand:[[12], [12], [12], [12], [12], [12]]}, {numPlayers:6, playOrderPos:0}), INVALID_MOVE);
+
+    // player to the left of the player who went out on the current trick
+    assert.equal(GreatDalmuti.moves.pass({mostRecentPlay:[12], mostRecentPlayerIndex:0, passSinceLastPlay:true, hand:[[], [12], [12], [12], [12], [12]]}, {numPlayers:6, playOrderPos:1}), INVALID_MOVE);
+
+    // player to the left of the player who went out on the current trick
+    assert.equal(GreatDalmuti.moves.pass({mostRecentPlay:[12], mostRecentPlayerIndex:0, passSinceLastPlay:true, hand:[[], [], [12], [12], [12], [12]]}, {numPlayers:6, playOrderPos:2}), INVALID_MOVE);
+});
+
+it('pass is valid until the trick is actually won', () => {
+    // player to the left of the player who went out on the current trick
+    assert.notEqual(GreatDalmuti.moves.pass({mostRecentPlay:[12], mostRecentPlayerIndex:0, passSinceLastPlay:false, hand:[[], [12], [12], [12], [12], [12]]}, {numPlayers:6, playOrderPos:1}), INVALID_MOVE);
+
+    // player to the left of the player who went out on the current trick
+    assert.notEqual(GreatDalmuti.moves.pass({mostRecentPlay:[12], mostRecentPlayerIndex:0, passSinceLastPlay:false, hand:[[], [], [12], [12], [12], [12]]}, {numPlayers:6, playOrderPos:2}), INVALID_MOVE);
 });

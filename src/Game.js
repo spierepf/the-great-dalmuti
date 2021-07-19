@@ -13,6 +13,17 @@ function RemoveCards(hand, cards) {
     return hand;
 }
 
+function NextPlayerWithCards(G, ctx, playerIndex) {
+    while(G.hand[playerIndex].length === 0) {
+        playerIndex = (playerIndex + 1) % ctx.numPlayers;
+    }
+    return playerIndex;
+}
+
+function CurrentPlayerHasLead(G, ctx) {
+    return G.mostRecentPlay === undefined || (ctx.playOrderPos === NextPlayerWithCards(G, ctx, G.mostRecentPlayerIndex) && G.passSinceLastPlay);
+}
+
 export const GreatDalmuti = {
     setup: (ctx) => {
         let G = ({
@@ -38,6 +49,10 @@ export const GreatDalmuti = {
 
     turn: {
         moveLimit: 1,
+        order: {
+            first: (G, ctx) => 0,
+            next: (G, ctx) => NextPlayerWithCards(G, ctx, (ctx.playOrderPos + 1) % ctx.numPlayers),
+        }
     },
 
     moves: {
@@ -48,7 +63,7 @@ export const GreatDalmuti = {
             }
 
             let rank = SortCards(cards)[0];
-            if (G.mostRecentPlay !== undefined) {
+            if (!CurrentPlayerHasLead(G, ctx)) {
                 if (G.mostRecentPlay.length !== cards.length) {
                     console.log("Attempt to play the wrong number of cards");
                     return INVALID_MOVE;
@@ -65,10 +80,16 @@ export const GreatDalmuti = {
 
             try {
                 G.hand[ctx.playOrderPos] = RemoveCards(G.hand[ctx.playOrderPos], cards);
-                G.mostRecentPlayerIndex = ctx.playOrderPos;
                 G.mostRecentPlay = cards;
+                G.mostRecentPlayerIndex = ctx.playOrderPos;
+                G.passSinceLastPlay = false;
                 if (G.hand[ctx.playOrderPos].length === 0) {
                     G.finalRank.push(ctx.currentPlayer);
+                    if(G.finalRank.length === ctx.numPlayers - 1) {
+                        let greaterPeonIndex = NextPlayerWithCards(G, ctx, G.mostRecentPlayerIndex);
+                        G.finalRank.push(ctx.playerOrder[greaterPeonIndex]);
+                        G.hand[greaterPeonIndex] = [];
+                    }
                 }
             } catch(e) {
                 console.log("Attempt to play cards not held by player");
@@ -76,6 +97,12 @@ export const GreatDalmuti = {
             }
         },
 
-        pass: (G, ctx) => {},
+        pass: (G, ctx) => {
+            if (CurrentPlayerHasLead(G, ctx)) {
+                console.log("Attempt by the lead player to pass");
+                return INVALID_MOVE;
+            }
+            G.passSinceLastPlay = true;
+        },
     },
 }

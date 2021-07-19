@@ -104,3 +104,10 @@ it('pass is valid until the trick is actually won', () => {
     // player to the left of the player who went out on the current trick
     assert.notEqual(GreatDalmuti.moves.pass({mostRecentPlay:[12], mostRecentPlayerIndex:0, passSinceLastPlay:false, hand:[[], [], [12], [12], [12], [12]]}, {numPlayers:6, playOrderPos:2}), INVALID_MOVE);
 });
+
+it('should complete the round when the second to last player goes out', () => {
+    const G = {hand: [[9, 9, 9], [], [], [8, 8, 9, 9], [] ,[]], finalRank: ["1", "5", "2", "4"]};
+    GreatDalmuti.moves.playCards(G, {playOrderPos:0, currentPlayer:"0", numPlayers:6, playerOrder:["0", "1", "2", "3", "4", "5"]}, [9, 9, 9]);
+    assert.deepEqual(G.finalRank, ["1", "5", "2", "4", "0", "3"]);
+    assert.deepEqual(G.hand, [[], [], [], [], [] ,[]]);
+});

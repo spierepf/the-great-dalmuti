@@ -85,6 +85,11 @@ export const GreatDalmuti = {
                 G.passSinceLastPlay = false;
                 if (G.hand[ctx.playOrderPos].length === 0) {
                     G.finalRank.push(ctx.currentPlayer);
+                    if(G.finalRank.length === ctx.numPlayers - 1) {
+                        let greaterPeonIndex = NextPlayerWithCards(G, ctx, G.mostRecentPlayerIndex);
+                        G.finalRank.push(ctx.playerOrder[greaterPeonIndex]);
+                        G.hand[greaterPeonIndex] = [];
+                    }
                 }
             } catch(e) {
                 console.log("Attempt to play cards not held by player");
